@@ -3,3 +3,6 @@ target
 *.iml
 updater-testing/
 */dependency-reduced-pom.xml
+!gamepack.jar
+*.jar
+deob.jar.*.json

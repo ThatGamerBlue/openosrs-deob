@@ -34,7 +34,9 @@ interface Transformer {
                 RemoveErrorConstructors,
                 UnusedMethodFinder,
                 UnusedMethodRemover,
+                MethodGarbageValueAnnotations,
                 OpaquePredicateArgumentRemover,
+                MethodObfuscatedSigantureAnnotations,
                 UnnecessaryGotoRemover,
                 SortFieldsByModifiers,
                 SortMethodsByLineNumber,
@@ -42,8 +44,7 @@ interface Transformer {
                 RemoveEnclosingMethodAttributes,
                 MultiplierFinder,
                 MultiplierFixer,
-                MultiplierAnnotations,
-                SignatureAnnotations
+                MultiplierAnnotations
         )
 
         /**

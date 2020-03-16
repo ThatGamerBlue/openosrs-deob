@@ -11,6 +11,7 @@ import org.objectweb.asm.Type.LONG_TYPE
 import org.objectweb.asm.tree.*
 import org.objectweb.asm.tree.analysis.*
 import org.runestar.client.updater.common.invert
+import org.runestar.client.updater.deob.Main
 import org.runestar.client.updater.deob.Transformer
 import org.runestar.client.updater.deob.util.*
 import java.nio.file.Files
@@ -30,34 +31,6 @@ object MultiplierFixer : Transformer {
         check(Files.exists(multFile))
 
         val decoders: Map<String, Long> = mapper.readValue(multFile.toFile())
-        val annoDecoders: Map<String, Number> = mapper.readValue(multFile.toFile())
-
-        var numValueInjections = 0
-        var numValueInjectionsMissed = 0;
-        for (mult in annoDecoders.keys) {
-            val clasz = classNodes.find { classNode -> classNode.name == mult.split(".")[0] }
-            if (clasz != null) {
-                val field = clasz.fields.find { field -> field.name == mult.split(".")[1] }
-                if (field !=null) {
-                    println("Modding "+clasz.name+":"+field.name)
-                    if (annoDecoders[mult] is Long) {
-                        println(annoDecoders[mult])
-                        field.visitAnnotation("Lnet/runelite/mapping/ObfuscatedGetter;", true).visit("longValue", annoDecoders[mult])
-                        numValueInjections++
-                    } else {
-                        println(annoDecoders[mult])
-                        field.visitAnnotation("Lnet/runelite/mapping/ObfuscatedGetter;", true).visit("intValue", annoDecoders[mult])
-                        numValueInjections++
-                    }
-                } else {
-                    numValueInjectionsMissed++
-                }
-            } else {
-                numValueInjectionsMissed++
-            }
-        }
-
-        Logger.getAnonymousLogger().info("Added " + numValueInjections + " ObfuscatedGetter Annotations, missed " + numValueInjectionsMissed)
 
         for (c in classNodes) {
             for (m in c.methods) {

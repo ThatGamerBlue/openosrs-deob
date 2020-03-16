@@ -64,6 +64,23 @@ object OpaquePredicateCheckRemover : Transformer {
         val opFile = destination.resolveSibling(destination.fileName.toString() + ".op.json").toFile()
         mapper.writeValue(opFile, passingArgs)
 
+        val opDescs = TreeMap<String, String>()
+        for (methodKVPair in passingArgs) {
+            val method = methodKVPair.key
+            var className = method.split(".")[0]
+            var methodNameAndDesc = method.split(".")[1]
+            var methodName = methodNameAndDesc.substring(0, methodNameAndDesc.indexOf("("))
+            var methodDesc = methodNameAndDesc.substring(methodNameAndDesc.indexOf("("))
+            var methodArguments = methodDesc.substring(1, methodDesc.indexOf(")"))
+            var methodRetVal = methodDesc.substring(methodDesc.indexOf(")") + 1)
+
+            var new = className + "." + methodName + "(" + methodArguments.substring(0, methodArguments.length - 1) + ")" + methodRetVal
+            opDescs[new] = method.substring(method.indexOf("("));
+        }
+
+        val opDescsFile = destination.resolveSibling(destination.fileName.toString() + ".op-descs.json").toFile()
+        mapper.writeValue(opDescsFile, opDescs)
+
         writeJar(classNodes, destination)
     }
 
